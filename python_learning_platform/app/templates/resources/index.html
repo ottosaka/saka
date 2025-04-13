@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+
+{% block title %}学习资源{% endblock %}
+
+{% block content %}
+<h1>学习资源</h1>
+<form method="GET" action="{{ url_for('resources') }}" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="search" class="form-control" placeholder="按标题搜索">
+        <select name="category" class="form-select">
+            <option value="">所有分类</option>
+            {% for category in categories %}
+            <option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>{{ category }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">搜索</button>
+    </div>
+</form>
+{% if resources %}
+<div class="row">
+    {% for resource in resources %}
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ resource.title }}</h5>
+                <p class="card-text">{{ resource.description }}</p>
+                <p class="card-text">分类: {{ resource.category }}</p>
+                {% if resource.file_path %}
+                <a href="{{ url_for('download_resource', resource_id=resource.id) }}" class="btn btn-success">下载</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-muted">未找到相关资源。</p>
+{% endif %}
+{% endblock %}

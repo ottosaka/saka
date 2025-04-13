@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block title %}论坛{% endblock %}
+
+{% block content %}
+<h1>论坛</h1>
+<form method="GET" action="{{ url_for('forum') }}" class="mb-3">
+    <select name="sort" class="form-select">
+        <option value="newest" {% if sort_option == 'newest' %}selected{% endif %}>最新发布优先</option>
+        <option value="oldest" {% if sort_option == 'oldest' %}selected{% endif %}>最早发布优先</option>
+        <option value="most_votes" {% if sort_option == 'most_votes' %}selected{% endif %}>最多投票优先</option>
+    </select>
+    <button type="submit" class="btn btn-primary">排序</button>
+</form>
+{% for post in posts %}
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">{{ post.title }}</h5>
+        <p class="card-text">{{ post.content[:100] }}...</p>
+        <p class="card-text">发布者: {{ post.user.username }}，发布时间: {{ post.created_at.strftime('%Y-%m-%d') }}</p>
+        <p class="card-text">投票数: {{ post.votes }}</p>
+        <a href="{{ url_for('post_detail', post_id=post.id) }}" class="btn btn-primary">查看帖子</a>
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('vote_post', post_id=post.id, action='up') }}" class="btn btn-success">点赞</a>
+        <a href="{{ url_for('vote_post', post_id=post.id, action='down') }}" class="btn btn-danger">踩</a>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
